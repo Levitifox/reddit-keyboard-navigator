@@ -1,157 +1,152 @@
-(function() {
-  'use strict';
+(function () {
+    "use strict";
 
-  const HIGHLIGHT = 'rkni-highlight';
+    const HIGHLIGHT = "rkni-highlight";
+    const INDICATOR_ID = "rkni-indicator";
+    const OVERLAY_ID = "rkni-overlay";
 
-  function getPosts() {
-    const anchors = Array.from(document.querySelectorAll('a[href*="/comments/"]'));
-    const seen = new Set();
-    return anchors
-      .map(a => a.closest('article') || a.closest('[data-testid="post-container"]'))
-      .filter(post => post
-        && !seen.has(post)
-        && post.getBoundingClientRect().height > 50
-        && (seen.add(post), true)
-      );
-  }
-
-  function getCurrentIndex(posts) {
-    return posts.findIndex(p => p.classList.contains(HIGHLIGHT));
-  }
-
-  function highlight(index, posts) {
-    posts.forEach(p => p.classList.remove(HIGHLIGHT));
-    const p = posts[index];
-    if (!p) return;
-    p.classList.add(HIGHLIGHT);
-    p.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-
-  function pauseMedia(post) {
-    if (!post) return;
-    post.querySelectorAll('video, audio').forEach(m => {
-      m.pause();
-      m.currentTime = 0;
-    });
-  }
-
-  function openPost(newTab, posts) {
-    const p = posts[getCurrentIndex(posts)];
-    if (!p) return;
-    const link = p.querySelector('a[data-click-id="body"], a[href*="/comments/"]');
-    if (!link) return;
-    newTab
-      ? window.open(link.href, '_blank')
-      : (location.href = link.href);
-  }
-
-  function openMedia(posts) {
-    const p = posts[getCurrentIndex(posts)];
-    if (!p) return;
-    const wrap = p.querySelector('[data-click-id="media"], [data-testid="post-content"]');
-    if (wrap) { wrap.click(); return; }
-    const leaf = p.querySelector('img[src*="preview.redd.it"], img[src*="i.redd.it"], video');
-    leaf && leaf.click();
-  }
-
-  function lightboxOpen() {
-    return !!document.querySelector('[data-testid="media-lightbox"], .Lightbox, [role="dialog"]');
-  }
-  function navLightbox(dir) {
-    const root = document.querySelector('[data-testid="media-lightbox"], .Lightbox, [role="dialog"]');
-    if (!root) return;
-    const sel = dir==='prev'
-      ? 'button[aria-label*="Previous"], [data-testid="lightbox-prev"]'
-      : 'button[aria-label*="Next"], [data-testid="lightbox-next"]';
-    const btn = root.querySelector(sel);
-    btn && btn.click();
-  }
-  function closeLightbox() {
-    const btn = document.querySelector('[data-testid="lightbox-close"], button[aria-label*="Close"]');
-    btn && btn.click();
-  }
-
-  document.addEventListener('keydown', e => {
-    if (/INPUT|TEXTAREA/.test(e.target.tagName) || e.target.isContentEditable) {
-      if (e.key === 'Escape' && lightboxOpen()) {
-        e.preventDefault();
-        closeLightbox();
-      }
-      return;
+    function getPosts() {
+        const anchors = Array.from(document.querySelectorAll('a[href*="/comments/"]'));
+        const seen = new Set();
+        return anchors.map(a => a.closest("article") || a.closest('[data-testid="post-container"]')).filter(p => p && !seen.has(p) && seen.add(p));
     }
 
-    const posts = getPosts();
-    const idx = getCurrentIndex(posts);
-    let newIdx = idx;
-
-    switch (e.key) {
-      case 'ArrowUp':
-        if (!lightboxOpen() && posts.length) {
-          e.preventDefault();
-          pauseMedia(posts[idx]);
-          newIdx = idx <= 0 ? 0 : idx - 1;
-          if (idx < 0) newIdx = 0;
-          highlight(newIdx, posts);
-        }
-        break;
-
-      case 'ArrowDown':
-        if (!lightboxOpen() && posts.length) {
-          e.preventDefault();
-          pauseMedia(posts[idx]);
-          newIdx = idx < 0
-            ? 0
-            : Math.min(posts.length - 1, idx + 1);
-          highlight(newIdx, posts);
-        }
-        break;
-
-      case 'Enter':
-        if (!lightboxOpen()) {
-          e.preventDefault();
-          openPost(e.shiftKey, posts);
-        }
-        break;
-
-      case 'i': case 'I':
-        if (!lightboxOpen()) {
-          e.preventDefault();
-          openMedia(posts);
-        }
-        break;
-
-      case 'ArrowLeft':
-        if (lightboxOpen()) {
-          e.preventDefault();
-          navLightbox('prev');
-        }
-        break;
-
-      case 'ArrowRight':
-        if (lightboxOpen()) {
-          e.preventDefault();
-          navLightbox('next');
-        }
-        break;
-
-      case 'Escape':
-        if (lightboxOpen()) {
-          e.preventDefault();
-          closeLightbox();
-        }
-        break;
+    function getCurrentIndex(posts) {
+        return posts.findIndex(p => p.classList.contains(HIGHLIGHT));
     }
-  }, true);
 
-  window.addEventListener('load', () => {
-    const posts = getPosts();
-    if (!posts.length) return;
-    let start = posts.findIndex(p => {
-      const r = p.getBoundingClientRect();
-      return r.top >= 0 && r.bottom <= window.innerHeight;
-    });
-    if (start < 0) start = 0;
-    highlight(start, posts);
-  });
+    function highlight(idx, posts) {
+        posts.forEach(p => p.classList.remove(HIGHLIGHT));
+        const p = posts[idx];
+        if (!p) return;
+        p.classList.add(HIGHLIGHT);
+        p.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
 
+    function openMedia(posts) {
+        const p = posts[getCurrentIndex(posts)];
+        if (!p) return;
+        const wrap = p.querySelector('[data-click-id="media"], [data-testid="post-content"]');
+        if (wrap) return wrap.click();
+        const leaf = p.querySelector('img[src*="i.redd.it"], img[src*="preview.redd.it"], video');
+        leaf && leaf.click();
+    }
+
+    function createIndicator() {
+        if (document.getElementById(INDICATOR_ID)) return;
+        const el = document.createElement("div");
+        el.id = INDICATOR_ID;
+        el.innerHTML = `
+      <span class="rkni-indicator-text">Shortcuts:</span>
+      <span class="rkni-indicator-key">Shift+?</span>
+    `;
+        document.body.appendChild(el);
+    }
+
+    function createOverlay() {
+        if (document.getElementById(OVERLAY_ID)) return;
+        const ov = document.createElement("div");
+        ov.id = OVERLAY_ID;
+        ov.innerHTML = `
+      <div class="rkni-ov-content">
+        <h3>Reddit Keyboard Navigator</h3>
+        
+        <div class="shortcut-category">
+          <div class="category-title">Navigation</div>
+          <ul>
+            <li><strong>↑ / ↓</strong> Navigate posts</li>
+            <li><strong>/</strong> Search Reddit</li>
+          </ul>
+        </div>
+
+        <div class="shortcut-category">
+          <div class="category-title">Posts</div>
+          <ul>
+            <li><strong>Enter</strong> Open post</li>
+            <li><strong>Shift+Enter</strong> Open post in new tab</li>
+          </ul>
+        </div>
+
+        <div class="shortcut-category">
+          <div class="category-title">Media</div>
+          <ul>
+            <li><strong>I</strong> Open image/gallery</li>
+            <li><strong>← / →</strong> Prev/Next image</li>
+            <li><strong>Esc</strong> Close image</li>
+            <li><strong>M</strong> Mute/unmute video</li>
+          </ul>
+        </div>
+
+        <div class="shortcut-category">
+          <div class="category-title">Help</div>
+          <ul>
+            <li><strong>Shift+?</strong> Toggle this help</li>
+          </ul>
+        </div>
+
+        <p class="close-hint">Press <strong>Shift+?</strong> or <strong>Esc</strong> to close</p>
+      </div>
+    `;
+        document.body.appendChild(ov);
+    }
+
+    function toggleOverlay() {
+        const ov = document.getElementById(OVERLAY_ID);
+        if (ov) ov.remove();
+        else createOverlay();
+    }
+
+    document.addEventListener(
+        "keydown",
+        e => {
+            if (e.key === "?" && e.shiftKey) {
+                e.preventDefault();
+                return toggleOverlay();
+            }
+            if (e.key === "Escape" && document.getElementById(OVERLAY_ID)) {
+                e.preventDefault();
+                return toggleOverlay();
+            }
+
+            if (/INPUT|TEXTAREA/.test(e.target.tagName) || e.target.isContentEditable) {
+                return;
+            }
+
+            const posts = getPosts();
+            const idx = getCurrentIndex(posts);
+            let newIdx = idx;
+
+            if (e.key === "ArrowUp") {
+                if (!posts.length) return;
+                e.preventDefault();
+                newIdx = idx <= 0 ? 0 : idx - 1;
+                if (idx < 0) newIdx = 0;
+                highlight(newIdx, posts);
+            } else if (e.key === "ArrowDown") {
+                if (!posts.length) return;
+                e.preventDefault();
+                newIdx = idx < 0 ? 0 : Math.min(posts.length - 1, idx + 1);
+                highlight(newIdx, posts);
+            } else if (e.key.toLowerCase() === "i") {
+                e.preventDefault();
+                openMedia(posts);
+            }
+        },
+        true,
+    );
+
+    function init() {
+        const posts = getPosts();
+        if (!posts.length) return;
+        let start = posts.findIndex(p => {
+            const r = p.getBoundingClientRect();
+            return r.top >= 0 && r.bottom <= window.innerHeight;
+        });
+        if (start < 0) start = 0;
+        highlight(start, posts);
+        createIndicator();
+    }
+
+    if (document.readyState === "complete") setTimeout(init, 50);
+    else window.addEventListener("load", init);
 })();
