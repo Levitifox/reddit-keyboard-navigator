@@ -32,6 +32,26 @@
         leaf && leaf.click();
     }
 
+    function openPost(posts, openInNewTab) {
+        const p = posts[getCurrentIndex(posts)];
+        if (!p) return;
+        const link = p.querySelector('a[href*="/comments/"]');
+        if (!link) return;
+        if (openInNewTab) {
+            link.dispatchEvent(
+                new MouseEvent("click", {
+                    ctrlKey: true,
+                    shiftKey: true,
+                    bubbles: true,
+                    cancelable: true,
+                    view: window,
+                }),
+            );
+        } else {
+            window.location.href = link.href;
+        }
+    }
+
     function createIndicator() {
         if (document.getElementById(INDICATOR_ID)) return;
         const el = document.createElement("div");
@@ -130,6 +150,10 @@
             } else if (e.key.toLowerCase() === "i") {
                 e.preventDefault();
                 openMedia(posts);
+            } else if (e.key === "Enter") {
+                if (!posts.length) return;
+                e.preventDefault();
+                openPost(posts, e.shiftKey);
             }
         },
         true,
