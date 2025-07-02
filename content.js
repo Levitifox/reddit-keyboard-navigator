@@ -98,8 +98,9 @@
           <ul>
             <li><strong>I</strong> Open image/gallery</li>
             <li><strong>← / →</strong> Prev/Next image</li>
-            <li><strong>Esc</strong> Close image</li>
+            <li><strong>Space</strong> Play/Pause video</li>
             <li><strong>M</strong> Mute/unmute video</li>
+            <li><strong>Esc</strong> Close image</li>
           </ul>
         </div>
 
@@ -161,12 +162,42 @@
                 }
             }
 
+            if (e.code === "Space") {
+                e.preventDefault();
+                let videoEl = null;
+                if (lightbox) {
+                    const lbPlayer = lightbox.querySelector("shreddit-player-2");
+                    if (lbPlayer && lbPlayer.shadowRoot) {
+                        videoEl = lbPlayer.shadowRoot.querySelector("video");
+                    }
+                }
+                if (!videoEl && idx >= 0) {
+                    const feedPlayer = posts[idx].querySelector("shreddit-player-2");
+                    if (feedPlayer && feedPlayer.shadowRoot) {
+                        videoEl = feedPlayer.shadowRoot.querySelector("video");
+                    }
+                }
+                if (!videoEl) {
+                    const pagePlayer = document.querySelector("shreddit-player-2");
+                    if (pagePlayer && pagePlayer.shadowRoot) {
+                        videoEl = pagePlayer.shadowRoot.querySelector("video");
+                    }
+                }
+                if (videoEl) {
+                    if (videoEl.paused) videoEl.play();
+                    else videoEl.pause();
+                }
+                return;
+            }
+
             if (e.key.toLowerCase() === "m") {
                 e.preventDefault();
                 let videoEl = null;
-                const lbPlayer = lightbox && lightbox.querySelector("shreddit-player-2");
-                if (lbPlayer && lbPlayer.shadowRoot) {
-                    videoEl = lbPlayer.shadowRoot.querySelector("video");
+                if (lightbox) {
+                    const lbPlayer = lightbox.querySelector("shreddit-player-2");
+                    if (lbPlayer && lbPlayer.shadowRoot) {
+                        videoEl = lbPlayer.shadowRoot.querySelector("video");
+                    }
                 }
                 if (!videoEl && idx >= 0) {
                     const feedPlayer = posts[idx].querySelector("shreddit-player-2");
