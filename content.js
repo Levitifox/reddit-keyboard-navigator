@@ -8,7 +8,8 @@
     const HIGHLIGHT = "rkni-highlight";
     const INDICATOR_ID = "rkni-indicator";
     const OVERLAY_ID = "rkni-overlay";
-    let shortcutsEnabled = true;
+    const stored = localStorage.getItem("rkni-shortcuts-enabled");
+    let shortcutsEnabled = stored === "false" ? false : true;
 
     function getPosts() {
         const anchors = Array.from(document.querySelectorAll('a[href*="/comments/"]'));
@@ -189,6 +190,7 @@
             if (e.ctrlKey && e.key === "\\") {
                 e.preventDefault();
                 shortcutsEnabled = !shortcutsEnabled;
+                localStorage.setItem("rkni-shortcuts-enabled", shortcutsEnabled);
                 updateIndicator();
                 if (!shortcutsEnabled) {
                     const posts = getPosts();
@@ -390,6 +392,10 @@
         const posts = getPosts();
         createIndicator();
         updateIndicator();
+        if (!shortcutsEnabled) {
+            posts.forEach(p => p.classList.remove(HIGHLIGHT));
+            return;
+        }
         if (!posts.length) return;
         let start = posts.findIndex(p => {
             const r = p.getBoundingClientRect();
