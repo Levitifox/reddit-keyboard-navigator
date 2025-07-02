@@ -351,6 +351,8 @@
 
     function init() {
         const posts = getPosts();
+        createIndicator();
+        updateIndicator();
         if (!posts.length) return;
         let start = posts.findIndex(p => {
             const r = p.getBoundingClientRect();
@@ -358,9 +360,20 @@
         });
         if (start < 0) start = 0;
         highlight(start, posts);
-        createIndicator();
-        updateIndicator();
     }
+
+    const _push = history.pushState;
+    history.pushState = function () {
+        _push.apply(this, arguments);
+        window.dispatchEvent(new Event("locationchange"));
+    };
+    const _replace = history.replaceState;
+    history.replaceState = function () {
+        _replace.apply(this, arguments);
+        window.dispatchEvent(new Event("locationchange"));
+    };
+    window.addEventListener("popstate", () => window.dispatchEvent(new Event("locationchange")));
+    window.addEventListener("locationchange", () => setTimeout(init, 50));
 
     if (document.readyState === "complete") setTimeout(init, 50);
     else window.addEventListener("load", init);
