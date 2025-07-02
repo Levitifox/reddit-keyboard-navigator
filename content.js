@@ -126,6 +126,10 @@
     document.addEventListener(
         "keydown",
         e => {
+            if (/INPUT|TEXTAREA/.test(e.target.tagName) || e.target.isContentEditable) {
+                return;
+            }
+
             if (e.altKey && e.key === "ArrowLeft") {
                 e.preventDefault();
                 window.history.back();
@@ -235,10 +239,6 @@
             if (e.key === "Escape" && document.getElementById(OVERLAY_ID)) {
                 e.preventDefault();
                 return toggleOverlay();
-            }
-
-            if (/INPUT|TEXTAREA/.test(e.target.tagName) || e.target.isContentEditable) {
-                return;
             }
 
             if (["ArrowUp", "ArrowDown", "i", "Enter"].includes(e.key) || e.key.toLowerCase() === "i") {
