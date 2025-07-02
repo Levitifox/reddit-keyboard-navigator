@@ -8,6 +8,7 @@
     const HIGHLIGHT = "rkni-highlight";
     const INDICATOR_ID = "rkni-indicator";
     const OVERLAY_ID = "rkni-overlay";
+    let shortcutsEnabled = true;
 
     function getPosts() {
         const anchors = Array.from(document.querySelectorAll('a[href*="/comments/"]'));
@@ -73,6 +74,20 @@
         document.body.appendChild(el);
     }
 
+    function updateIndicator() {
+        const el = document.getElementById(INDICATOR_ID);
+        if (!el) return;
+        const textSpan = el.querySelector(".rkni-indicator-text");
+        const keySpan = el.querySelector(".rkni-indicator-key");
+        if (shortcutsEnabled) {
+            textSpan.textContent = "Shortcuts:";
+            keySpan.textContent = "Shift + ?";
+        } else {
+            textSpan.textContent = "Turn on shortcuts:";
+            keySpan.textContent = "Ctrl + \\";
+        }
+    }
+
     function createOverlay() {
         if (document.getElementById(OVERLAY_ID)) return;
         const ov = document.createElement("div");
@@ -113,6 +128,7 @@
             <div class="category-title">Help</div>
             <ul>
               <li><span class="shortcut-strong-wrapper"><strong>Shift + ?</strong></span> Toggle this help</li>
+              <li><span class="shortcut-strong-wrapper"><strong>Ctrl + \\</strong></span> Toggle all shortcuts</li>
             </ul>
           </div>
         </div>
@@ -132,6 +148,15 @@
     document.addEventListener(
         "keydown",
         e => {
+            if (e.ctrlKey && e.key === "\\") {
+                e.preventDefault();
+                shortcutsEnabled = !shortcutsEnabled;
+                updateIndicator();
+                return;
+            }
+            if (!shortcutsEnabled) {
+                return;
+            }
             if (/INPUT|TEXTAREA/.test(e.target.tagName) || e.target.isContentEditable) {
                 return;
             }
@@ -281,6 +306,7 @@
         if (start < 0) start = 0;
         highlight(start, posts);
         createIndicator();
+        updateIndicator();
     }
 
     if (document.readyState === "complete") setTimeout(init, 50);
