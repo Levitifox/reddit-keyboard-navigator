@@ -119,6 +119,26 @@
     document.addEventListener(
         "keydown",
         e => {
+            const lightbox = document.querySelector('#shreddit-media-lightbox');
+            if (lightbox) {
+                const gallery = lightbox.querySelector('gallery-carousel');
+                const galleryRoot = gallery && gallery.shadowRoot;
+                if (galleryRoot) {
+                    if (e.key === "ArrowLeft") {
+                        e.preventDefault();
+                        const prev = galleryRoot.querySelector('button[aria-label="Previous page"]');
+                        prev && prev.click();
+                        return;
+                    }
+                    if (e.key === "ArrowRight") {
+                        e.preventDefault();
+                        const next = galleryRoot.querySelector('button[aria-label="Next page"]');
+                        next && next.click();
+                        return;
+                    }
+                }
+            }
+
             if (e.key === "?" && e.shiftKey) {
                 e.preventDefault();
                 return toggleOverlay();
@@ -140,7 +160,6 @@
                 if (!posts.length) return;
                 e.preventDefault();
                 newIdx = idx <= 0 ? 0 : idx - 1;
-                if (idx < 0) newIdx = 0;
                 highlight(newIdx, posts);
             } else if (e.key === "ArrowDown") {
                 if (!posts.length) return;
