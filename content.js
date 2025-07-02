@@ -125,23 +125,39 @@
     document.addEventListener(
         "keydown",
         e => {
+            let galleryRoot = null;
+
             const lightbox = document.querySelector("#shreddit-media-lightbox");
             if (lightbox) {
-                const gallery = lightbox.querySelector("gallery-carousel");
-                const galleryRoot = gallery && gallery.shadowRoot;
-                if (galleryRoot) {
-                    if (e.key === "ArrowLeft") {
-                        e.preventDefault();
-                        const prev = galleryRoot.querySelector('button[aria-label="Previous page"]');
-                        prev && prev.click();
-                        return;
-                    }
-                    if (e.key === "ArrowRight") {
-                        e.preventDefault();
-                        const next = galleryRoot.querySelector('button[aria-label="Next page"]');
-                        next && next.click();
-                        return;
-                    }
+                const gb = lightbox.querySelector("gallery-carousel");
+                galleryRoot = gb && gb.shadowRoot;
+            }
+
+            const posts = getPosts();
+            const idx = getCurrentIndex(posts);
+            if (!galleryRoot && idx >= 0) {
+                const p = posts[idx];
+                const gb2 = p && p.querySelector("gallery-carousel");
+                galleryRoot = gb2 && gb2.shadowRoot;
+            }
+
+            if (!galleryRoot) {
+                const gb3 = document.querySelector("gallery-carousel");
+                galleryRoot = gb3 && gb3.shadowRoot;
+            }
+
+            if (galleryRoot) {
+                if (e.key === "ArrowLeft") {
+                    e.preventDefault();
+                    const prev = galleryRoot.querySelector('button[aria-label="Previous page"]');
+                    prev && prev.click();
+                    return;
+                }
+                if (e.key === "ArrowRight") {
+                    e.preventDefault();
+                    const next = galleryRoot.querySelector('button[aria-label="Next page"]');
+                    next && next.click();
+                    return;
                 }
             }
 
@@ -158,26 +174,28 @@
                 return;
             }
 
-            const posts = getPosts();
-            const idx = getCurrentIndex(posts);
-
-            if (e.key === "ArrowUp") {
-                if (!posts.length) return;
-                e.preventDefault();
-                const newIdx = idx <= 0 ? 0 : idx - 1;
-                highlight(newIdx, posts);
-            } else if (e.key === "ArrowDown") {
-                if (!posts.length) return;
-                e.preventDefault();
-                const newIdx = idx < 0 ? 0 : Math.min(posts.length - 1, idx + 1);
-                highlight(newIdx, posts);
-            } else if (e.key.toLowerCase() === "i") {
-                e.preventDefault();
-                openMedia(posts);
-            } else if (e.key === "Enter") {
-                if (!posts.length) return;
-                e.preventDefault();
-                openPost(posts, e.shiftKey);
+            if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key.toLowerCase() === "i" || e.key === "Enter") {
+                const postsLocal = posts;
+                const idxLocal = idx;
+                let newIdx;
+                if (e.key === "ArrowUp") {
+                    if (!postsLocal.length) return;
+                    e.preventDefault();
+                    newIdx = idxLocal <= 0 ? 0 : idxLocal - 1;
+                    highlight(newIdx, postsLocal);
+                } else if (e.key === "ArrowDown") {
+                    if (!postsLocal.length) return;
+                    e.preventDefault();
+                    newIdx = idxLocal < 0 ? 0 : Math.min(postsLocal.length - 1, idxLocal + 1);
+                    highlight(newIdx, postsLocal);
+                } else if (e.key.toLowerCase() === "i") {
+                    e.preventDefault();
+                    openMedia(postsLocal);
+                } else if (e.key === "Enter") {
+                    if (!postsLocal.length) return;
+                    e.preventDefault();
+                    openPost(postsLocal, e.shiftKey);
+                }
             }
         },
         true,
