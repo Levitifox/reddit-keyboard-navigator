@@ -1,6 +1,10 @@
 (function () {
     "use strict";
 
+    const htmlEl = document.documentElement;
+    const isDark = htmlEl.classList.contains("theme-dark");
+    htmlEl.setAttribute("data-rkni-theme", isDark ? "dark" : "light");
+
     const HIGHLIGHT = "rkni-highlight";
     const INDICATOR_ID = "rkni-indicator";
     const OVERLAY_ID = "rkni-overlay";
@@ -64,7 +68,7 @@
         el.id = INDICATOR_ID;
         el.innerHTML = `
       <span class="rkni-indicator-text">Shortcuts:</span>
-      <span class="rkni-indicator-key">Shift+?</span>
+      <span class="rkni-indicator-key">Shift + ?</span>
     `;
         document.body.appendChild(el);
     }
@@ -77,41 +81,43 @@
       <div class="rkni-ov-content">
         <h3>Reddit Keyboard Navigator</h3>
         
-        <div class="shortcut-category">
-          <div class="category-title">Navigation</div>
-          <ul>
-            <li><strong>↑ / ↓</strong> Navigate posts</li>
-            <li><strong>Alt + ← / →</strong> Back/Forward</li>
-          </ul>
+        <div class="rkni-shortcuts-grid">
+          <div class="shortcut-category">
+            <div class="category-title">Navigation</div>
+            <ul>
+              <li><span class="shortcut-strong-wrapper"><strong>↑ / ↓</strong></span> Navigate posts</li>
+              <li><span class="shortcut-strong-wrapper"><strong>Alt + ← / →</strong></span> Back/Forward</li>
+            </ul>
+          </div>
+
+          <div class="shortcut-category">
+            <div class="category-title">Posts</div>
+            <ul>
+              <li><span class="shortcut-strong-wrapper"><strong>Enter</strong></span> Open post</li>
+              <li><span class="shortcut-strong-wrapper"><strong>Shift+Enter</strong></span> Open post in new tab</li>
+            </ul>
+          </div>
+
+          <div class="shortcut-category">
+            <div class="category-title">Media</div>
+            <ul>
+              <li><span class="shortcut-strong-wrapper"><strong>I</strong></span> Open image/gallery</li>
+              <li><span class="shortcut-strong-wrapper"><strong>← / →</strong></span> Prev/Next image</li>
+              <li><span class="shortcut-strong-wrapper"><strong>Space</strong></span> Play/Pause video</li>
+              <li><span class="shortcut-strong-wrapper"><strong>M</strong></span> Mute/unmute video</li>
+              <li><span class="shortcut-strong-wrapper"><strong>Esc</strong></span> Close image</li>
+            </ul>
+          </div>
+
+          <div class="shortcut-category">
+            <div class="category-title">Help</div>
+            <ul>
+              <li><span class="shortcut-strong-wrapper"><strong>Shift + ?</strong></span> Toggle this help</li>
+            </ul>
+          </div>
         </div>
 
-        <div class="shortcut-category">
-          <div class="category-title">Posts</div>
-          <ul>
-            <li><strong>Enter</strong> Open post</li>
-            <li><strong>Shift+Enter</strong> Open post in new tab</li>
-          </ul>
-        </div>
-
-        <div class="shortcut-category">
-          <div class="category-title">Media</div>
-          <ul>
-            <li><strong>I</strong> Open image/gallery</li>
-            <li><strong>← / →</strong> Prev/Next image</li>
-            <li><strong>Space</strong> Play/Pause video</li>
-            <li><strong>M</strong> Mute/unmute video</li>
-            <li><strong>Esc</strong> Close image</li>
-          </ul>
-        </div>
-
-        <div class="shortcut-category">
-          <div class="category-title">Help</div>
-          <ul>
-            <li><strong>Shift+?</strong> Toggle this help</li>
-          </ul>
-        </div>
-
-        <p class="close-hint">Press <strong>Shift+?</strong> or <strong>Esc</strong> to close</p>
+        <p class="close-hint">Press <strong>Shift + ?</strong> or <strong>Esc</strong> to close</p>
       </div>
     `;
         document.body.appendChild(ov);

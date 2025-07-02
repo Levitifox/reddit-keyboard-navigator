@@ -1,36 +1,95 @@
+html[data-rkni-theme="light"] {
+    --rkni-canvas: #ffffff;
+    --rkni-canvas-weak: #f8f9fa;
+    --rkni-neutral-content: #1c1c2c;
+    --rkni-neutral-content-weak: #787c82;
+    --rkni-neutral-border: #ccc;
+    --rkni-neutral-border-weak: #e9ecef;
+    --rkni-brand: #ff4500;
+    --rkni-brand-weak: #ff45001a;
+    --rkni-overlay: #00000060;
+}
+
+html[data-rkni-theme="dark"] {
+    --rkni-canvas: #0e1113;
+    --rkni-canvas-weak: #1a1a1b;
+    --rkni-neutral-content: #d7dadc;
+    --rkni-neutral-content-weak: #818384;
+    --rkni-neutral-border: #343536;
+    --rkni-neutral-border-weak: #272729;
+    --rkni-brand: #ff4500;
+    --rkni-overlay: #00000070;
+}
+
+:root {
+    --rkni-canvas: #ffffff;
+    --rkni-canvas-weak: #f8f9fa;
+    --rkni-neutral-content: #1c1c1c;
+    --rkni-neutral-content-weak: #787c82;
+    --rkni-neutral-border: #ccc;
+    --rkni-neutral-border-weak: #e9ecef;
+    --rkni-brand: #ff4500;
+    --rkni-brand-weak: #ff45001a;
+    --rkni-overlay: #00000060;
+}
+
+html {
+    --rkni-canvas: var(--color-canvas, #ffffff);
+    --rkni-canvas-weak: var(--color-canvas-weak, #f8f9fa);
+    --rkni-neutral-content: var(--color-neutral-content, #1c1c1c);
+    --rkni-neutral-content-weak: var(--color-neutral-content-weak, #787c82);
+    --rkni-neutral-border: var(--color-neutral-border, #ccc);
+    --rkni-neutral-border-weak: var(--color-neutral-border-weak, #e9ecef);
+    --rkni-brand: var(--color-brand, #ff4500);
+    --rkni-overlay: #00000060;
+}
+
 .rkni-highlight {
-    outline: 2px solid #ff4500 !important;
-    border-radius: 7px !important;
+    outline: 2px solid var(--rkni-brand) !important;
+    border-radius: 4px !important;
+    outline-offset: 2px !important;
 }
 
 #rkni-indicator {
     position: fixed !important;
-    bottom: 20px !important;
-    right: 20px !important;
-    background: #0e1113 !important;
+    bottom: 16px !important;
+    right: 16px !important;
+    background: var(--rkni-canvas) !important;
     padding: 8px 12px !important;
-    border-radius: 8px !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-    font-size: 12px !important;
-    color: #d7dadc !important;
-    border: 1px solid #343536 !important;
-    z-index: 9999 !important;
+    border-radius: 6px !important;
+    font-family:
+        "IBMPlexSans",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: var(--rkni-neutral-content) !important;
+    border: 1px solid var(--rkni-neutral-border-weak) !important;
+    z-index: 1000 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: opacity 0.2s ease !important;
+}
+
+#rkni-indicator:hover {
+    opacity: 0.35 !important;
 }
 
 .rkni-indicator-text {
-    font-weight: 600 !important;
-    margin-right: 8px !important;
-    color: #ffffff !important;
+    color: var(--rkni-neutral-content) !important;
+    font-weight: 400 !important;
 }
 
 .rkni-indicator-key {
-    padding: 3px 6px !important;
-    border-radius: 4px !important;
-    font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace !important;
-    font-weight: 600 !important;
-    font-size: 11px !important;
-    color: #ffffff !important;
-    border: 1px solid #ff4500 !important;
+    color: var(--rkni-brand) !important;
+    padding: 0px 6px !important;
+    font-family: "IBMPlexMono", "SF Mono", Monaco, monospace !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
 }
 
 #rkni-overlay {
@@ -39,153 +98,160 @@
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    background: #00000080 !important;
-    backdrop-filter: blur(12px) !important;
+    background: var(--rkni-overlay) !important;
+    backdrop-filter: blur(4px) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    z-index: 999998 !important;
-    animation: fadeIn 0.1s ease-out !important;
+    z-index: 1001 !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
 }
 
 .rkni-ov-content {
-    background: #0e1113 !important;
-    color: #d7dadc !important;
-    padding: 32px !important;
-    border-radius: 12px !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-    width: 480px !important;
+    background: var(--rkni-canvas) !important;
+    color: var(--rkni-neutral-content) !important;
+    padding: 24px !important;
+    border-radius: 8px !important;
+    font-family:
+        "IBMPlexSans",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        sans-serif !important;
+    border: 1px solid var(--rkni-neutral-border-weak) !important;
     max-width: 90vw !important;
-    text-align: left !important;
-    border: 1px solid #343536 !important;
-    animation: slideInUp 0.1s ease-out !important;
+    max-height: 90vh !important;
+    width: fit-content !important;
+    min-width: 600px !important;
 }
 
 .rkni-ov-content h3 {
     margin: 0 0 20px 0 !important;
-    color: #ffffff !important;
-    font-size: 20px !important;
-    font-weight: 700 !important;
+    color: var(--rkni-neutral-content) !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
     text-align: center !important;
+    line-height: 22px !important;
 }
 
-.rkni-ov-content ul {
-    padding-left: 0 !important;
-    margin: 0 0 24px 0 !important;
-    list-style: none !important;
-}
-
-.rkni-ov-content .shortcut-category {
+.rkni-shortcuts-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+    gap: 20px !important;
     margin-bottom: 20px !important;
 }
 
+.rkni-ov-content .shortcut-category {
+    margin: 0 !important;
+}
+
 .rkni-ov-content .category-title {
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    color: #ffffff !important;
-    margin-bottom: 8px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    color: var(--rkni-neutral-content-weak) !important;
+    margin-bottom: 12px !important;
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
 }
 
+.rkni-ov-content ul {
+    padding: 0 !important;
+    margin: 0 !important;
+    list-style: none !important;
+}
+
 .rkni-ov-content li {
-    margin-bottom: 8px !important;
-    padding: 6px 16px !important;
     display: flex !important;
     align-items: center !important;
+    margin-bottom: 8px !important;
+    gap: 12px !important;
+    font-size: 14px !important;
+    line-height: 18px !important;
 }
 
 .rkni-ov-content li strong {
-    font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace !important;
-    font-weight: 600 !important;
-    color: #ff4500 !important;
-    padding: 4px 12px !important;
-    border-radius: 4px !important;
-    margin-right: 12px !important;
-    text-align: center !important;
-    font-size: 11px !important;
-    border: 1px solid #ff450033 !important;
-    display: inline-flex !important;
-    align-items: center !important;
+    font-family: "IBMPlexMono", "SF Mono", Monaco, monospace !important;
+    font-weight: 500 !important;
+    color: var(--rkni-brand) !important;
+    background: none !important;
+    padding: 2px 4px !important;
+    border-radius: 3px !important;
+    font-size: 12px !important;
+    border: none !important;
+    min-width: 50px !important;
+    text-align: left !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.shortcut-strong-wrapper {
+    flex-shrink: 0 !important;
+    min-width: 100px !important;
 }
 
 .rkni-ov-content .close-hint {
-    margin: 20px 0 0 0 !important;
+    margin: 0 !important;
     font-size: 12px !important;
-    color: #818384 !important;
+    color: var(--rkni-neutral-content) !important;
     text-align: center !important;
     padding: 12px !important;
-    background: #ffffff05 !important;
-    border-radius: 6px !important;
-    border: 1px solid #ffffff0d !important;
+    border-radius: 4px !important;
+    border: 1px solid var(--rkni-neutral-border-weak) !important;
 }
 
 .rkni-ov-content .close-hint strong {
-    color: #ff4500 !important;
+    color: var(--rkni-brand) !important;
     background: none !important;
     padding: 0 !important;
     border: none !important;
     margin: 0 2px !important;
     min-width: auto !important;
+    font-size: inherit !important;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
+@media (max-width: 768px) {
+    #rkni-indicator {
+        bottom: 12px !important;
+        right: 12px !important;
+        font-size: 13px !important;
+        padding: 6px 10px !important;
     }
-    to {
-        opacity: 1;
-    }
-}
 
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.95);
+    .rkni-ov-content {
+        min-width: 0 !important;
+        width: 100% !important;
+        max-width: 90vw !important;
+        padding: 20px !important;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
 
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
+    .rkni-shortcuts-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
     }
 }
 
 @media (max-width: 480px) {
     #rkni-indicator {
-        bottom: 15px !important;
-        right: 15px !important;
+        bottom: 8px !important;
+        right: 8px !important;
+        font-size: 12px !important;
+        padding: 6px 8px !important;
+    }
+
+    .rkni-indicator-key {
         font-size: 11px !important;
-        padding: 6px 10px !important;
+        padding: 2px 4px !important;
     }
 
     .rkni-ov-content {
-        padding: 24px !important;
-        margin: 20px !important;
-        width: auto !important;
+        padding: 16px !important;
+        border-radius: 6px !important;
     }
 
     .rkni-ov-content h3 {
-        font-size: 18px !important;
-    }
-
-    .rkni-ov-content li {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 6px !important;
-    }
-
-    .rkni-ov-content li strong {
-        margin-right: 0 !important;
-        min-width: auto !important;
+        font-size: 16px !important;
     }
 }
