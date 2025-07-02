@@ -161,6 +161,31 @@
                 }
             }
 
+            if (e.key.toLowerCase() === "m") {
+                e.preventDefault();
+                let videoEl = null;
+                const lbPlayer = lightbox && lightbox.querySelector("shreddit-player-2");
+                if (lbPlayer && lbPlayer.shadowRoot) {
+                    videoEl = lbPlayer.shadowRoot.querySelector("video");
+                }
+                if (!videoEl && idx >= 0) {
+                    const feedPlayer = posts[idx].querySelector("shreddit-player-2");
+                    if (feedPlayer && feedPlayer.shadowRoot) {
+                        videoEl = feedPlayer.shadowRoot.querySelector("video");
+                    }
+                }
+                if (!videoEl) {
+                    const pagePlayer = document.querySelector("shreddit-player-2");
+                    if (pagePlayer && pagePlayer.shadowRoot) {
+                        videoEl = pagePlayer.shadowRoot.querySelector("video");
+                    }
+                }
+                if (videoEl) {
+                    videoEl.muted = !videoEl.muted;
+                }
+                return;
+            }
+
             if (e.key === "?" && e.shiftKey) {
                 e.preventDefault();
                 return toggleOverlay();
@@ -174,27 +199,24 @@
                 return;
             }
 
-            if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key.toLowerCase() === "i" || e.key === "Enter") {
-                const postsLocal = posts;
-                const idxLocal = idx;
-                let newIdx;
+            if (["ArrowUp", "ArrowDown", "i", "Enter"].includes(e.key) || e.key.toLowerCase() === "i") {
                 if (e.key === "ArrowUp") {
-                    if (!postsLocal.length) return;
+                    if (!posts.length) return;
                     e.preventDefault();
-                    newIdx = idxLocal <= 0 ? 0 : idxLocal - 1;
-                    highlight(newIdx, postsLocal);
+                    const newIdx = idx <= 0 ? 0 : idx - 1;
+                    highlight(newIdx, posts);
                 } else if (e.key === "ArrowDown") {
-                    if (!postsLocal.length) return;
+                    if (!posts.length) return;
                     e.preventDefault();
-                    newIdx = idxLocal < 0 ? 0 : Math.min(postsLocal.length - 1, idxLocal + 1);
-                    highlight(newIdx, postsLocal);
+                    const newIdx = idx < 0 ? 0 : Math.min(posts.length - 1, idx + 1);
+                    highlight(newIdx, posts);
                 } else if (e.key.toLowerCase() === "i") {
                     e.preventDefault();
-                    openMedia(postsLocal);
+                    openMedia(posts);
                 } else if (e.key === "Enter") {
-                    if (!postsLocal.length) return;
+                    if (!posts.length) return;
                     e.preventDefault();
-                    openPost(postsLocal, e.shiftKey);
+                    openPost(posts, e.shiftKey);
                 }
             }
         },
