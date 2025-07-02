@@ -81,7 +81,7 @@
           <div class="category-title">Navigation</div>
           <ul>
             <li><strong>↑ / ↓</strong> Navigate posts</li>
-            <li><strong>/</strong> Search Reddit</li>
+            <li><strong>Alt + ← / →</strong> Back/Forward</li>
           </ul>
         </div>
 
@@ -126,6 +126,17 @@
     document.addEventListener(
         "keydown",
         e => {
+            if (e.altKey && e.key === "ArrowLeft") {
+                e.preventDefault();
+                window.history.back();
+                return;
+            }
+            if (e.altKey && e.key === "ArrowRight") {
+                e.preventDefault();
+                window.history.forward();
+                return;
+            }
+
             let galleryRoot = null;
 
             const lightbox = document.querySelector("#shreddit-media-lightbox");
