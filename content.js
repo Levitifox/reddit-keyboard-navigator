@@ -190,6 +190,10 @@
                 e.preventDefault();
                 shortcutsEnabled = !shortcutsEnabled;
                 updateIndicator();
+                if (!shortcutsEnabled) {
+                    const posts = getPosts();
+                    posts.forEach(p => p.classList.remove(HIGHLIGHT));
+                }
                 return;
             }
             if (!shortcutsEnabled) {
