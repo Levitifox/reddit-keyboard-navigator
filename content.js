@@ -63,6 +63,43 @@
         }
     }
 
+    function vote(type, posts) {
+        const idx = getCurrentIndex(posts);
+        const selector = type === "up" ? "button[upvote]" : "button[downvote]";
+        let btn = null;
+        if (idx >= 0 && posts[idx]) {
+            const post = posts[idx];
+            const voteContainers = ['[data-post-click-location="vote"]', '[data-testid="vote-arrows"]', ".vote", '[class*="vote"]', "shreddit-post"];
+
+            for (const containerSelector of voteContainers) {
+                const container = post.querySelector(containerSelector);
+                if (container) {
+                    btn = container.querySelector(selector);
+                    if (btn) break;
+                    if (container.shadowRoot) {
+                        btn = container.shadowRoot.querySelector(selector);
+                        if (btn) break;
+                    }
+                }
+            }
+
+            if (!btn) {
+                btn = post.querySelector(selector);
+            }
+        }
+        if (!btn) {
+            const container = document.querySelector('[data-post-click-location="vote"]');
+            if (container) btn = container.querySelector(selector);
+        }
+        if (!btn) {
+            const sp = document.querySelector("shreddit-post");
+            if (sp && sp.shadowRoot) {
+                btn = sp.shadowRoot.querySelector(selector);
+            }
+        }
+        btn && btn.click();
+    }
+
     function createIndicator() {
         if (document.getElementById(INDICATOR_ID)) return;
         const el = document.createElement("div");
@@ -110,6 +147,7 @@
             <ul>
               <li><span class="shortcut-strong-wrapper"><strong>Enter</strong></span> Open post</li>
               <li><span class="shortcut-strong-wrapper"><strong>Shift+Enter</strong></span> Open post in new tab</li>
+              <li><span class="shortcut-strong-wrapper"><strong>U / D</strong></span> Upvote/Downvote post</li>
             </ul>
           </div>
 
@@ -206,6 +244,17 @@
                     next && next.click();
                     return;
                 }
+            }
+
+            if (e.key.toLowerCase() === "u") {
+                e.preventDefault();
+                vote("up", posts);
+                return;
+            }
+            if (e.key.toLowerCase() === "d") {
+                e.preventDefault();
+                vote("down", posts);
+                return;
             }
 
             if (e.code === "Space") {
