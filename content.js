@@ -154,11 +154,11 @@
           <div class="shortcut-category">
             <div class="category-title">Media</div>
             <ul>
-              <li><span class="shortcut-strong-wrapper"><strong>I</strong></span> Open image/gallery</li>
+              <li><span class="shortcut-strong-wrapper"><strong>I / Esc</strong></span> Open/Close image(s)</li>
               <li><span class="shortcut-strong-wrapper"><strong>← / →</strong></span> Prev/Next image</li>
               <li><span class="shortcut-strong-wrapper"><strong>Space</strong></span> Play/Pause video</li>
               <li><span class="shortcut-strong-wrapper"><strong>M</strong></span> Mute/unmute video</li>
-              <li><span class="shortcut-strong-wrapper"><strong>Esc</strong></span> Close image</li>
+              <li><span class="shortcut-strong-wrapper"><strong>F</strong></span> Toggle fullscreen</li>
             </ul>
           </div>
 
@@ -314,6 +314,43 @@
                     videoEl.muted = !videoEl.muted;
                 }
                 return;
+            }
+
+            if (e.key.toLowerCase() === "f") {
+                e.preventDefault();
+                let playerShadow = null;
+                const lightboxF = document.querySelector("#shreddit-media-lightbox");
+                if (lightboxF) {
+                    const lbPlayerF = lightboxF.querySelector("shreddit-player-2");
+                    if (lbPlayerF && lbPlayerF.shadowRoot) playerShadow = lbPlayerF.shadowRoot;
+                }
+                if (!playerShadow) {
+                    const feedPlayerF = posts[getCurrentIndex(posts)]?.querySelector("shreddit-player-2");
+                    if (feedPlayerF && feedPlayerF.shadowRoot) playerShadow = feedPlayerF.shadowRoot;
+                }
+                if (!playerShadow) {
+                    const pagePlayerF = document.querySelector("shreddit-player-2");
+                    if (pagePlayerF && pagePlayerF.shadowRoot) playerShadow = pagePlayerF.shadowRoot;
+                }
+                if (playerShadow) {
+                    const fsBtn = playerShadow.querySelector('button[aria-label="Toggle fullscreen"], button[aria-label="Full screen"], button.fullscreen');
+                    if (fsBtn) {
+                        fsBtn.click();
+                        return;
+                    }
+                }
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                    return;
+                }
+                const lightboxHost = document.querySelector("#shreddit-media-lightbox")?.querySelector("shreddit-player-2");
+                const feedHost = posts[getCurrentIndex(posts)]?.querySelector("shreddit-player-2");
+                const pageHost = document.querySelector("shreddit-player-2");
+                const host = lightboxHost || feedHost || pageHost;
+                if (host && host.requestFullscreen) {
+                    host.requestFullscreen();
+                    return;
+                }
             }
 
             if (e.key === "?" && e.shiftKey) {
