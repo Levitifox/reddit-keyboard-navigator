@@ -1,6 +1,7 @@
 (function () {
     "use strict";
 
+    // Set extension theme based on Reddit's theme
     const htmlEl = document.documentElement;
     const isDark = htmlEl.classList.contains("theme-dark");
     htmlEl.setAttribute("data-rkni-theme", isDark ? "dark" : "light");
@@ -8,19 +9,23 @@
     const HIGHLIGHT = "rkni-highlight";
     const INDICATOR_ID = "rkni-indicator";
     const OVERLAY_ID = "rkni-overlay";
+    // Track shortcuts enabled state
     const stored = localStorage.getItem("rkni-shortcuts-enabled");
     let shortcutsEnabled = stored === "false" ? false : true;
 
+    // Get all visible Reddit posts
     function getPosts() {
         const anchors = Array.from(document.querySelectorAll('a[href*="/comments/"]'));
         const seen = new Set();
         return anchors.map(a => a.closest("article") || a.closest('[data-testid="post-container"]')).filter(p => p && !seen.has(p) && seen.add(p));
     }
 
+    // Find the highlighted post index
     function getCurrentIndex(posts) {
         return posts.findIndex(p => p.classList.contains(HIGHLIGHT));
     }
 
+    // Highlight a post and scroll to it
     function highlight(idx, posts) {
         posts.forEach(p => p.classList.remove(HIGHLIGHT));
         const p = posts[idx];
@@ -29,6 +34,7 @@
         p.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
+    // Try to open media (image/video) in the current post
     function openMedia(posts) {
         const idx = getCurrentIndex(posts);
         if (idx >= 0 && posts.length) {
@@ -44,6 +50,7 @@
         leafPage && leafPage.click();
     }
 
+    // Open the highlighted post (optionally in a new tab)
     function openPost(posts, openInNewTab) {
         const p = posts[getCurrentIndex(posts)];
         if (!p) return;
@@ -64,6 +71,7 @@
         }
     }
 
+    // Upvote or downvote the highlighted post
     function vote(type, posts) {
         const idx = getCurrentIndex(posts);
         const selector = type === "up" ? "button[upvote]" : "button[downvote]";
@@ -101,6 +109,7 @@
         btn && btn.click();
     }
 
+    // Create the floating indicator in the corner
     function createIndicator() {
         if (document.getElementById(INDICATOR_ID)) return;
         const el = document.createElement("div");
@@ -112,6 +121,7 @@
         document.body.appendChild(el);
     }
 
+    // Update indicator text based on shortcuts state
     function updateIndicator() {
         const el = document.getElementById(INDICATOR_ID);
         if (!el) return;
@@ -126,6 +136,7 @@
         }
     }
 
+    // Create the help overlay with all shortcuts
     function createOverlay() {
         if (document.getElementById(OVERLAY_ID)) return;
         const ov = document.createElement("div");
@@ -178,15 +189,18 @@
         document.body.appendChild(ov);
     }
 
+    // Toggle the help overlay on/off
     function toggleOverlay() {
         const ov = document.getElementById(OVERLAY_ID);
         if (ov) ov.remove();
         else createOverlay();
     }
 
+    // Main keyboard event handler for all shortcuts
     document.addEventListener(
         "keydown",
         e => {
+            // Toggle all shortcuts on/off
             if (e.ctrlKey && e.key === "\\") {
                 e.preventDefault();
                 shortcutsEnabled = !shortcutsEnabled;
@@ -201,10 +215,12 @@
             if (!shortcutsEnabled) {
                 return;
             }
+            // Ignore if typing in input/textarea/contenteditable
             if (/INPUT|TEXTAREA/.test(e.target.tagName) || e.target.isContentEditable) {
                 return;
             }
 
+            // Browser navigation
             if (e.altKey && e.key === "ArrowLeft") {
                 e.preventDefault();
                 window.history.back();
@@ -218,6 +234,7 @@
 
             let galleryRoot = null;
 
+            // Try to find gallery carousel for image navigation
             const lightbox = document.querySelector("#shreddit-media-lightbox");
             if (lightbox) {
                 const gb = lightbox.querySelector("gallery-carousel");
@@ -237,6 +254,7 @@
                 galleryRoot = gb3 && gb3.shadowRoot;
             }
 
+            // Gallery navigation (prev/next image)
             if (galleryRoot) {
                 if (e.key === "ArrowLeft") {
                     e.preventDefault();
@@ -252,6 +270,7 @@
                 }
             }
 
+            // Upvote/Downvote
             if (e.key.toLowerCase() === "u") {
                 e.preventDefault();
                 vote("up", posts);
@@ -263,6 +282,7 @@
                 return;
             }
 
+            // Play/Pause video
             if (e.code === "Space") {
                 e.preventDefault();
                 let videoEl = null;
@@ -291,6 +311,7 @@
                 return;
             }
 
+            // Mute/Unmute video
             if (e.key.toLowerCase() === "m") {
                 e.preventDefault();
                 let videoEl = null;
@@ -318,6 +339,7 @@
                 return;
             }
 
+            // Toggle fullscreen for video
             if (e.key.toLowerCase() === "f") {
                 e.preventDefault();
                 let playerShadow = null;
@@ -355,6 +377,7 @@
                 }
             }
 
+            // Show/hide help overlay
             if (e.key === "?" && e.shiftKey) {
                 e.preventDefault();
                 return toggleOverlay();
@@ -364,6 +387,7 @@
                 return toggleOverlay();
             }
 
+            // Post navigation and media open
             if (["ArrowUp", "ArrowDown", "i", "Enter"].includes(e.key) || e.key.toLowerCase() === "i") {
                 if (e.key === "ArrowUp") {
                     if (!posts.length) return;
@@ -388,6 +412,7 @@
         true,
     );
 
+    // Initialize indicator and highlight on page load/location change
     function init() {
         const posts = getPosts();
         createIndicator();
@@ -405,6 +430,7 @@
         highlight(start, posts);
     }
 
+    // Listen for navigation changes (SPA)
     const _push = history.pushState;
     history.pushState = function () {
         _push.apply(this, arguments);
@@ -418,6 +444,7 @@
     window.addEventListener("popstate", () => window.dispatchEvent(new Event("locationchange")));
     window.addEventListener("locationchange", () => setTimeout(init, 50));
 
+    // Run init on load
     if (document.readyState === "complete") setTimeout(init, 50);
     else window.addEventListener("load", init);
 })();

@@ -44,12 +44,14 @@ html {
     --rkni-overlay: #00000060;
 }
 
+/* Highlighted post outline */
 .rkni-highlight {
     outline: 2px solid var(--rkni-brand) !important;
     border-radius: 4px !important;
     outline-offset: 2px !important;
 }
 
+/* Floating indicator styles */
 #rkni-indicator {
     position: fixed !important;
     bottom: 16px !important;
@@ -92,6 +94,7 @@ html {
     font-weight: 500 !important;
 }
 
+/* Overlay help styles */
 #rkni-overlay {
     position: fixed !important;
     top: 0 !important;
@@ -212,6 +215,7 @@ html {
     font-size: inherit !important;
 }
 
+/* Responsive adjustments */
 @media (max-width: 768px) {
     #rkni-indicator {
         bottom: 12px !important;
