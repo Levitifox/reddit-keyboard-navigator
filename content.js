@@ -24,12 +24,18 @@
     }
 
     function openMedia(posts) {
-        const p = posts[getCurrentIndex(posts)];
-        if (!p) return;
-        const wrap = p.querySelector('[data-click-id="media"], [data-testid="post-content"]');
-        if (wrap) return wrap.click();
-        const leaf = p.querySelector('img[src*="i.redd.it"], img[src*="preview.redd.it"], video');
-        leaf && leaf.click();
+        const idx = getCurrentIndex(posts);
+        if (idx >= 0 && posts.length) {
+            const p = posts[idx];
+            const wrap = p.querySelector('[data-click-id="media"], [data-testid="post-content"]');
+            if (wrap) return wrap.click();
+            const leaf = p.querySelector('img[src*="i.redd.it"], img[src*="preview.redd.it"], video');
+            if (leaf) return leaf.click();
+        }
+        const wrapPage = document.querySelector('[data-click-id="media"], [data-testid="post-content"]');
+        if (wrapPage) return wrapPage.click();
+        const leafPage = document.querySelector('img[src*="i.redd.it"], img[src*="preview.redd.it"], video');
+        leafPage && leafPage.click();
     }
 
     function openPost(posts, openInNewTab) {
@@ -119,9 +125,9 @@
     document.addEventListener(
         "keydown",
         e => {
-            const lightbox = document.querySelector('#shreddit-media-lightbox');
+            const lightbox = document.querySelector("#shreddit-media-lightbox");
             if (lightbox) {
-                const gallery = lightbox.querySelector('gallery-carousel');
+                const gallery = lightbox.querySelector("gallery-carousel");
                 const galleryRoot = gallery && gallery.shadowRoot;
                 if (galleryRoot) {
                     if (e.key === "ArrowLeft") {
@@ -154,17 +160,16 @@
 
             const posts = getPosts();
             const idx = getCurrentIndex(posts);
-            let newIdx = idx;
 
             if (e.key === "ArrowUp") {
                 if (!posts.length) return;
                 e.preventDefault();
-                newIdx = idx <= 0 ? 0 : idx - 1;
+                const newIdx = idx <= 0 ? 0 : idx - 1;
                 highlight(newIdx, posts);
             } else if (e.key === "ArrowDown") {
                 if (!posts.length) return;
                 e.preventDefault();
-                newIdx = idx < 0 ? 0 : Math.min(posts.length - 1, idx + 1);
+                const newIdx = idx < 0 ? 0 : Math.min(posts.length - 1, idx + 1);
                 highlight(newIdx, posts);
             } else if (e.key.toLowerCase() === "i") {
                 e.preventDefault();
